@@ -17,6 +17,7 @@ let newsDataArr = [];
 const API_KEY = "0ff925fdfc334d58b5ea1b415b963a5e"; // Replace with your News API key
 const BASE_URL = "https://newsapi.org/v2/top-headlines?country=in&apiKey=";
 
+
 // Event listeners for buttons
 generalBtn.addEventListener("click", () => fetchNews("general"));
 businessBtn.addEventListener("click", () => fetchNews("business"));
