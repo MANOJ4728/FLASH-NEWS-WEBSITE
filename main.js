@@ -1,4 +1,4 @@
-// variables
+// Variables
 const generalBtn = document.getElementById("genral");
 const businessBtn = document.getElementById("business");
 const sportsBtn = document.getElementById("sport");
@@ -11,217 +11,90 @@ const newsType = document.getElementById("newsType");
 const newsdetails = document.getElementById("newsdetails");
 
 // Array
-var newsDataArr = [];
+let newsDataArr = [];
 
-// apis 
-const API_KEY = "0ff925fdfc334d58b5ea1b415b963a5e";
-const HEADLINES_NEWS = "https://newsapi.org/v2/top-headlines?country=in&apiKey=";
-const GENERAL_NEWS = "https://newsapi.org/v2/top-headlines?country=in&category=general&apiKey=";
-const BUSINESS_NEWS = "https://newsapi.org/v2/top-headlines?country=in&category=business&apiKey=";
-const SPORTS_NEWS = "https://newsapi.org/v2/top-headlines?country=in&category=sports&apiKey=";
-const ENTERTAINMENT_NEWS = "https://newsapi.org/v2/top-headlines?country=in&category=entertainment&apiKey=";
-const TECHNOLOGY_NEWS = "https://newsapi.org/v2/top-headlines?country=in&category=technology&pageSize=8&apiKey=";
-const SEARCH_NEWS = "https://newsapi.org/v2/everything?q=";
+// APIs
+const API_KEY = "0ff925fdfc334d58b5ea1b415b963a5e"; // Replace with your News API key
+const BASE_URL = "https://newsapi.org/v2/top-headlines?country=in&apiKey=";
 
-window.onload = function() {
-    newsType.innerHTML="<h4>Headlines</h4>";
-    fetchHeadlines();
+// Event listeners for buttons
+generalBtn.addEventListener("click", () => fetchNews("general"));
+businessBtn.addEventListener("click", () => fetchNews("business"));
+sportsBtn.addEventListener("click", () => fetchNews("sports"));
+entertainmentBtn.addEventListener("click", () => fetchNews("entertainment"));
+technologyBtn.addEventListener("click", () => fetchNews("technology"));
+searchBtn.addEventListener("click", () => fetchNews("search"));
+
+// Fetch news data
+const fetchNews = async (category) => {
+    const endpoint = category === "search"
+        ? `${BASE_URL}${API_KEY}&q=${encodeURIComponent(newsQuery.value)}`
+        : `${BASE_URL}${API_KEY}&category=${category}`;
+
+    try {
+        const response = await fetch(endpoint);
+
+        if (response.status >= 200 && response.status < 300) {
+            const data = await response.json();
+            newsDataArr = data.articles;
+            displayNews(category);
+        } else {
+            throw new Error(`Failed to fetch news: ${response.status} ${response.statusText}`);
+        }
+    } catch (error) {
+        console.error(error);
+        newsdetails.innerHTML = `<h5>Error fetching news: ${error.message}</h5>`;
+    }
 };
 
-generalBtn.addEventListener("click",function(){
-    newsType.innerHTML="<h4>General news</h4>";
-    fetchGeneralNews();
-});
-
-businessBtn.addEventListener("click",function(){
-    newsType.innerHTML="<h4>Business</h4>";
-    fetchBusinessNews();
-});
-
-sportsBtn.addEventListener("click",function(){
-    newsType.innerHTML="<h4>Sports</h4>";
-    fetchSportsNews();
-});
-
-entertainmentBtn.addEventListener("click",function(){
-    newsType.innerHTML="<h4>Entertainment</h4>";
-    fetchEntertainmentNews();
-});
-
-technologyBtn.addEventListener("click",function(){
-    newsType.innerHTML="<h4>Technology</h4>";
-    fetchTechnologyNews();
-});
-
-searchBtn.addEventListener("click",function(){
-    newsType.innerHTML="<h4>Search : "+newsQuery.value+"</h4>";
-    fetchQueryNews();
-});
-
-const fetchHeadlines = async () => {
-    const response = await fetch(HEADLINES_NEWS+API_KEY);
-    newsDataArr = [];
-    if(response.status >=200 && response.status < 300) {
-        const myJson = await response.json();
-        newsDataArr = myJson.articles;
-    } else {
-        // handle errors
-        console.log(response.status, response.statusText);
-        newsdetails.innerHTML = "<h5>No data found.</h5>"
-        return;
-    }
-
-    displayNews();
-}
-
-const fetchGeneralNews = async () => {
-    const response = await fetch(GENERAL_NEWS+API_KEY);
-    newsDataArr = [];
-    if(response.status >=200 && response.status < 300) {
-        const myJson = await response.json();
-        newsDataArr = myJson.articles;
-    } else {
-        // handle errors
-        console.log(response.status, response.statusText);
-        newsdetails.innerHTML = "<h5>No data found.</h5>"
-        return;
-    }
-
-    displayNews();
-}
-
-const fetchBusinessNews = async () => {
-    const response = await fetch(BUSINESS_NEWS+API_KEY);
-    newsDataArr = [];
-    if(response.status >=200 && response.status < 300) {
-        const myJson = await response.json();
-        newsDataArr = myJson.articles;
-    } else {
-        // handle errors
-        console.log(response.status, response.statusText);
-        newsdetails.innerHTML = "<h5>No data found.</h5>"
-        return;
-    }
-
-    displayNews();
-}
-
-const fetchEntertainmentNews = async () => {
-    const response = await fetch(ENTERTAINMENT_NEWS+API_KEY);
-    newsDataArr = [];
-    if(response.status >=200 && response.status < 300) {
-        const myJson = await response.json();
-        console.log(myJson);
-        newsDataArr = myJson.articles;
-    } else {
-        // handle errors
-        console.log(response.status, response.statusText);
-        newsdetails.innerHTML = "<h5>No data found.</h5>"
-        return;
-    }
-
-    displayNews();
-}
-
-const fetchSportsNews = async () => {
-    const response = await fetch(SPORTS_NEWS+API_KEY);
-    newsDataArr = [];
-    if(response.status >=200 && response.status < 300) {
-        const myJson = await response.json();
-        newsDataArr = myJson.articles;
-    } else {
-        // handle errors
-        console.log(response.status, response.statusText);
-        newsdetails.innerHTML = "<h5>No data found.</h5>"
-        return;
-    }
-
-    displayNews();
-}
-
-const fetchTechnologyNews = async () => {
-    const response = await fetch(TECHNOLOGY_NEWS+API_KEY);
-    newsDataArr = [];
-    if(response.status >=200 && response.status < 300) {
-        const myJson = await response.json();
-        newsDataArr = myJson.articles;
-    } else {
-        // handle errors
-        console.log(response.status, response.statusText);
-        newsdetails.innerHTML = "<h5>No data found.</h5>"
-        return;
-    }
-
-    displayNews();
-}
-
-const fetchQueryNews = async () => {
-
-    if(newsQuery.value == null)
-        return;
-
-    const response = await fetch(SEARCH_NEWS+encodeURIComponent(newsQuery.value)+"&apiKey="+API_KEY);
-    newsDataArr = [];
-    if(response.status >= 200 && response.status < 300) {
-        const myJson = await response.json();
-        newsDataArr = myJson.articles;
-    } else {
-        //error handle
-        console.log(response.status, response.statusText);
-        newsdetails.innerHTML = "<h5>No data found.</h5>"
-        return;
-    }
-
-    displayNews();
-}
-
-function displayNews() {
-
+// Display news data
+const displayNews = (category) => {
+    newsType.innerHTML = `<h4>${category.charAt(0).toUpperCase() + category.slice(1)}</h4>`;
     newsdetails.innerHTML = "";
 
-    // if(newsDataArr.length == 0) {
-    //     newsdetails.innerHTML = "<h5>No data found.</h5>"
-    //     return;
-    // }
+    if (newsDataArr.length === 0) {
+        newsdetails.innerHTML = "<h5>No data found.</h5>";
+        return;
+    }
 
-    newsDataArr.forEach(news => {
+    newsDataArr.forEach((news) => {
+        const { title, publishedAt, urlToImage, description, url } = news;
+        const date = publishedAt.split("T")[0];
 
-        var date = news.publishedAt.split("T");
-        
-        var col = document.createElement('div');
-        col.className="col-sm-12 col-md-4 col-lg-3 p-2 card";
+        const col = document.createElement("div");
+        col.className = "col-sm-12 col-md-4 col-lg-3 p-2 card";
 
-        var card = document.createElement('div');
+        const card = document.createElement("div");
         card.className = "p-2";
 
-        var image = document.createElement('img');
-        image.setAttribute("height","matchparent");
-        image.setAttribute("width","100%");
-        image.src=news.urlToImage;
+        const image = document.createElement("img");
+        image.setAttribute("height", "matchparent");
+        image.setAttribute("width", "100%");
+        image.src = urlToImage;
 
-        var cardBody = document.createElement('div');
-        
-        var newsHeading = document.createElement('h5');
+        const cardBody = document.createElement("div");
+
+        const newsHeading = document.createElement("h5");
         newsHeading.className = "card-title";
-        newsHeading.innerHTML = news.title;
+        newsHeading.innerHTML = title;
 
-        var dateHeading = document.createElement('h6');
+        const dateHeading = document.createElement("h6");
         dateHeading.className = "text-primary";
-        dateHeading.innerHTML = date[0];
+        dateHeading.innerHTML = date;
 
-        var discription = document.createElement('p');
-        discription.className="text-muted";
-        discription.innerHTML = news.description;
+        const descriptionElement = document.createElement("p");
+        descriptionElement.className = "text-muted";
+        descriptionElement.innerHTML = description;
 
-        var link = document.createElement('a');
-        link.className="btn btn-dark";
+        const link = document.createElement("a");
+        link.className = "btn btn-dark";
         link.setAttribute("target", "_blank");
-        link.href = news.url;
-        link.innerHTML="Read more";
+        link.href = url;
+        link.innerHTML = "Read more";
 
         cardBody.appendChild(newsHeading);
         cardBody.appendChild(dateHeading);
-        cardBody.appendChild(discription);
+        cardBody.appendChild(descriptionElement);
         cardBody.appendChild(link);
 
         card.appendChild(image);
@@ -231,5 +104,4 @@ function displayNews() {
 
         newsdetails.appendChild(col);
     });
-
-}
+};
